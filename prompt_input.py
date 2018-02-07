@@ -124,8 +124,9 @@ chars = read_chars(chars_path)
 
 getch = _Getch()
 print('Welcome to typing trainer!')
+input('Press any key to continue')
 print('-' * 50)
-for _ in range(10):
+for _ in range(20):
     stats = compute_stats(logs, chars)
     key = choose_character(stats)
     print(f"Type: {key}\t(Attempts: {stats[key].count}, Errors: {stats[key].n_errors}, Reward: {round(stats[key].average_reward, 2)})")
