@@ -113,11 +113,11 @@ def write_logs(logs, path):
             print(log.serialize(), file=f)
 
 
-def choose_character(stats):
+def choose_characters(stats, n=1):
     total_counts = sum([stat.count for stat in stats.values()])
     chars, stats_list = zip(*stats.items())
     scores = [stat.UCB_score(total_counts) for stat in stats_list]
-    return chars[np.argmax(scores)]
+    return [chars[idx] for idx in np.argsort(scores)[::-1][:n]]
 
 
 current_script_dir = os.path.dirname(os.path.realpath(__file__))
@@ -130,19 +130,23 @@ getch = _Getch()
 print('Welcome to typing trainer!')
 input('Press any key to continue')
 print('-' * 50)
-for _ in range(20):
+# Iterate over batches
+for _ in range(4):
     stats = compute_stats(logs, chars)
-    key = choose_character(stats)
-    print(f"Type: {key}\t(Attempts: {stats[key].count}, Errors: {stats[key].n_errors}, Reward: {round(stats[key].average_reward, 2)})")
-    while True:
-        start = time.time()
-        typed_key = getch()
-        elapsed = time.time() - start
-        log = Log(start, key, typed_key, elapsed)
-        logs.append(log)
-        if log.is_correct:
-            break
+    keys = choose_characters(stats, n=5)
+    # Iterate over keys in current batch
+    for key in keys:
+        print(f"Type: {key}\t(Attempts: {stats[key].count}, Errors: {stats[key].n_errors}, Reward: {round(stats[key].average_reward, 2)})")
+        while True:
+            start = time.time()
+            typed_key = getch()
+            elapsed = time.time() - start
+            log = Log(start, key, typed_key, elapsed)
+            logs.append(log)
+            if log.is_correct:
+                break
 
+stats = compute_stats(logs, chars)
 write_logs(logs, logs_path)
 stats_path = os.path.join(current_script_dir, 'stats.txt')
 write_stats(stats, stats_path)
