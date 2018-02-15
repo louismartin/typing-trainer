@@ -84,6 +84,8 @@ def read_logs(path):
 def compute_stats(logs, chars):
     stats = {char: Stat() for char in chars}
     for log in logs:
+        if log.key not in stats.keys():
+            continue
         stats[log.key].update(log)
     return stats
 
