@@ -56,7 +56,9 @@ class Stat:
     @property
     def average_reward(self):
         # Hand crafted reward
-        return 2 * self.error_rate + self.average_time
+        error_rate_weight = 5
+        average_time_weight = 1
+        return (error_rate_weight * self.error_rate + average_time_weight * self.average_time) / (error_rate_weight + average_time_weight)
 
     def UCB_score(self, total_counts):
         if self.count == 0:
