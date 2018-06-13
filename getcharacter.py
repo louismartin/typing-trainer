@@ -13,6 +13,9 @@ screen."""
             raise KeyboardInterrupt
         elif char == '\x04':
             raise EOFError
+        elif char == '\x0D':
+            # Replace ^M with ?
+            char = '?'
         return char
 
 

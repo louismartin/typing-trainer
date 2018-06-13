@@ -31,7 +31,11 @@ class Log:
 
     @staticmethod
     def deserialize(string):
-        return Log(*string.split(', '))
+        try:
+            return Log(*string.split(', '))
+        except TypeError:
+            print(f'Could not parse {string}')
+            raise
 
 
 class Stat:
