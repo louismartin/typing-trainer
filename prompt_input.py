@@ -1,6 +1,5 @@
-from collections import defaultdict
 import os
-import random
+from statistics import median
 import time
 
 import numpy as np
@@ -39,15 +38,17 @@ class Log:
 
 
 class Stat:
-    def __init__(self, count=0, n_errors=0):
-        self.count = int(count)
-        self.n_errors = int(n_errors)
+    def __init__(self):
+        self.count = 0
+        self.n_errors = 0
+        self.times = []
         assert self.count >= self.n_errors
 
     def update(self, log):
         self.count += 1
         self.n_errors += log.is_error
-        # TODO: use elapsed time
+        self.times.append(log.elapsed)
+        self.median_time = median(self.times)
 
     @property
     def error_rate(self):
@@ -58,7 +59,9 @@ class Stat:
     @property
     def average_reward(self):
         # Hand crafted reward
-        return self.error_rate
+        error_weight = 5
+        time_weight = 1
+        return (error_weight * self.error_rate + time_weight * self.median_time) / (error_weight + time_weight)
 
     def UCB_score(self, total_counts):
         if self.count == 0:
@@ -70,6 +73,7 @@ class Stat:
 def read_chars(path):
     with open(path, 'r') as f:
         return [line.strip('\n') for line in f]
+
 
 def read_logs(path):
     if not os.path.exists(path):
@@ -119,7 +123,12 @@ for _ in range(4):
     keys = choose_characters(stats, n=5)
     # Iterate over keys in current batch
     for key in keys:
-        print(f"Type: {key}\t(Attempts: {stats[key].count}, Errors: {stats[key].n_errors}, Reward: {round(stats[key].average_reward, 2)})")
+        msg = f'Type: {key}\t'
+        msg += f'(Attempts: {stats[key].count}, '
+        msg += f'Errors: {stats[key].n_errors}, '
+        msg += f'Median time: {stats[key].median_time:.2f}, '
+        msg += f'Reward: {stats[key].average_reward:.2f})'
+        print(msg)
         while True:
             start = time.time()
             typed_key = getch()
