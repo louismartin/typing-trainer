@@ -90,22 +90,6 @@ def compute_stats(logs, chars):
     return stats
 
 
-def read_stats(path):
-    assert os.path.exists(path)
-    stats = {}
-    with open(path, 'r') as f:
-        for line in f:
-            char, count, n_errors = line.split(', ')
-            stats[char] = Stat(count, n_errors)
-    return stats
-
-
-def write_stats(stats, path):
-    with open(path, 'w') as f:
-        for char, stat in sorted(stats.items(), key=lambda kv: kv[1].count, reverse=True):
-            print(f'{char}, {stat.count}, {stat.n_errors}', file=f)
-
-
 def write_logs(logs, path):
     with open(path, 'w') as f:
         for log in logs:
@@ -148,4 +132,3 @@ for _ in range(4):
 stats = compute_stats(logs, chars)
 write_logs(logs, logs_path)
 stats_path = os.path.join(current_script_dir, 'stats.txt')
-write_stats(stats, stats_path)
