@@ -39,17 +39,15 @@ class Log:
 
 
 class Stat:
-    def __init__(self, count=0, n_errors=0, average_time=0):
+    def __init__(self, count=0, n_errors=0):
         self.count = int(count)
         self.n_errors = int(n_errors)
-        self.average_time = average_time
         assert self.count >= self.n_errors
 
     def update(self, log):
         self.count += 1
         self.n_errors += log.is_error
-        self.average_time *= (self.count - 1) / self.count
-        self.average_time += log.elapsed / self.count
+        # TODO: use elapsed time
 
     @property
     def error_rate(self):
@@ -60,9 +58,7 @@ class Stat:
     @property
     def average_reward(self):
         # Hand crafted reward
-        error_rate_weight = 5
-        average_time_weight = 1
-        return (error_rate_weight * self.error_rate + average_time_weight * self.average_time) / (error_rate_weight + average_time_weight)
+        return self.error_rate
 
     def UCB_score(self, total_counts):
         if self.count == 0:
@@ -95,8 +91,7 @@ def compute_stats(logs, chars):
 
 
 def read_stats(path):
-    if not os.path.exists(path):
-        return initialize_stats()
+    assert os.path.exists(path)
     stats = {}
     with open(path, 'r') as f:
         for line in f:
