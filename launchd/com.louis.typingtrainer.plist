@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+    <dict>
+        <key>Label</key>
+        <string>com.louis.typingtrainer</string>
+        <key>ProgramArguments</key>
+        <array>
+            <string>open</string>
+            <string>-a</string>
+            <string>Terminal</string>
+            <string>/Users/louismartin/dev/typing-trainer/launchd/prompt_input.sh</string>
+        </array>
+        <key>StartInterval</key>
+        <integer>600</integer>
+    </dict>
+</plist>
