@@ -1,5 +1,6 @@
 import os
 from statistics import median
+import sys
 import time
 
 import numpy as np
@@ -118,17 +119,22 @@ print('Welcome to typing trainer!')
 input('Press any key to continue')
 print('-' * 50)
 # Iterate over batches
-for _ in range(4):
+n_batches = 4
+batch_size = 5
+n_samples = n_batches * batch_size
+sample_idx = 0
+for _ in range(n_batches):
     stats = compute_stats(logs, chars)
-    keys = choose_characters(stats, n=5)
+    keys = choose_characters(stats, n=batch_size)
     # Iterate over keys in current batch
     for key in keys:
-        msg = f'Type: {key}\t'
+        sample_idx += 1
+        msg = f'\r({sample_idx}/{n_samples}) Type: {key}\t'
         msg += f'(Attempts: {stats[key].count}, '
         msg += f'Errors: {stats[key].n_errors}, '
         msg += f'Median time: {stats[key].median_time:.2f}, '
         msg += f'Reward: {stats[key].average_reward:.2f})'
-        print(msg)
+        sys.stdout.write(msg)
         while True:
             start = time.time()
             typed_key = getch()
@@ -137,7 +143,7 @@ for _ in range(4):
             logs.append(log)
             if log.is_correct:
                 break
-
+sys.stdout.write('\n')
 stats = compute_stats(logs, chars)
 write_logs(logs, logs_path)
 stats_path = os.path.join(current_script_dir, 'stats.txt')
