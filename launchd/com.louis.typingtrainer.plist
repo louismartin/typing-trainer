@@ -12,6 +12,6 @@
             <string>/Users/louismartin/dev/typing-trainer/launchd/prompt_input.sh</string>
         </array>
         <key>StartInterval</key>
-        <integer>1800</integer>
+        <integer>3600</integer>
     </dict>
 </plist>
